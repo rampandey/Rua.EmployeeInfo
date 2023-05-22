@@ -1,0 +1,137 @@
+﻿@model Entity.Employee
+
+<div id="myModal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                @if (Model.Id != 0)
+                {
+                    <h3 class="modal-title"><strong>Edit Employee</strong></h3>
+                }
+                else
+                {
+                    <h3 class="modal-title"><strong>Add Employee</strong></h3>
+                }
+                <button type="button" class="close" onclick="CloseModalPopup();" data-dismiss="modal" aria-hidden="true">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                      <div class="col-md-12 item_content">
+                        <form method="post" id="frmAddEmployee">
+                            <input type='hidden' class='form-control' asp-for="Id" />
+                            <h4>
+                                <span>Employee Details!!!</span>
+                            </h4>
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="panel">
+                                            <div class="panel-body">
+                                                <div class="col-md-12" style="margin-top:15px;">
+                                                    <label asp-for="Name" style="font-weight:bold;"></label>
+                                                    <input type='text' id="eName" class='form-control' asp-for="Name" />
+                                                    <span class="alert-danger" asp-validation-for="Name"></span>
+                                                </div>
+                                                <div class="col-md-12" style="margin-top:15px;">
+                                                    <label asp-for="Address" style="font-weight:bold;"></label>
+                                                    <input type='text' id="eAddress" class='form-control' asp-for="Address" />
+                                                    <span class="alert-danger" asp-validation-for="Address"></span>
+                                                </div>
+                                                <div class="col-md-12" style="margin-top:15px;">
+                                                    <label asp-for="Salary" style="font-weight:bold;"></label>
+                                                    <input type='text' id="eSalary" class='form-control' asp-for="Salary" />
+                                                    <span class="alert-danger" asp-validation-for="Salary"></span>
+                                                </div>
+                                                <div class="col-md-12" style="margin-top:15px;">
+                                                    <label style="font-weight:bold;">Department</label>
+                                                    <select class='form-control' asp-for="DepartmentId" asp-items="@Model.RequeststatusList"></select>
+                                                </div>
+
+                                                <div class="text-center col-md-12" style="margin-top:35px;">
+                                                    @if (Model.Id != 0)
+                                                    {
+                                                        <button class="btn btn-primary btn-sx" type="button" onclick="EditEmpDetails()"><i class="glyphicon glyphicon-plus"></i> Update Employee</button>
+                                                    }
+                                                    else
+                                                    {
+                                                        <button class="btn btn-primary btn-sx" type="button" onclick="AddEmpDetails()" id="btnAddEmp"><i class="glyphicon glyphicon-plus"></i> Save Employee</button>
+                                                    }
+                                                    <a class="btn btn-primary btn-sx" asp-page="/Employee/Index"><i class="glyphicon glyphicon-backward"></i> Employee List</a>
+                                                </div>
+                                             </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>  
+
+<script>
+        
+    //$("#btnAddEmp").click(function (e) {
+    function AddEmpDetails() {
+        var name = $("#eName").val();
+        if (name == '') {
+            alert("Please Enter Name !!");
+            return;
+        }
+        var valdata = $("#frmAddEmployee").serialize();
+        
+        $.ajax({
+            url: 'Employee/Add/?handler=AddEmployee',
+            type: 'post',
+            contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+            dataType: "json",
+            data: valdata,
+            beforeSend: function (xhr) {
+            xhr.setRequestHeader("XSRF-TOKEN",
+            $('input:hidden[name="__RequestVerificationToken"]').val());
+                               }
+        }).done(function (data) {
+                $("#myModal").modal('hide');
+                $('#EmployeeList').load('?handler=EmployeeListPartial');
+            alert(data);
+        })
+            .fail(function (error) {
+                alert(error.responseText);
+            });
+     }
+    
+    function EditEmpDetails() {
+
+        var name = $("#eName").val();
+        if (name == '') {
+            alert("Please Enter Name !!");
+            return;
+        }
+        
+        var valdata = $("#frmAddEmployee").serialize();
+        $.ajax({
+            url: 'Employee/Edit?handler=EditEmployee',
+            type: 'post',
+            contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+            dataType: "json",
+            data: valdata,
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("XSRF-TOKEN",
+                    $('input:hidden[name="__RequestVerificationToken"]').val());
+            }
+        }).done(function (data) {
+            $("#myModal").modal('hide');
+            $('#EmployeeList').load('?handler=EmployeeListPartial');
+            alert(data);
+        })
+            .fail(function (error) {
+                alert(error.responseText);
+            });
+            }
+  
+    function CloseModalPopup() {
+        $("#myModal").modal('hide');
+    }
+</script>

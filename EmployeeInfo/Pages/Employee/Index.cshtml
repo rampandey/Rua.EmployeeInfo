@@ -1,0 +1,90 @@
+﻿@page
+@model IndexModel
+@{
+
+    ViewData["Title"] = "Employee page";
+}
+
+<div class="container">
+    <div class="mail-box">
+        <aside class="lg-side">
+            <div class="inbox-head">
+                <h3>Employee</h3>
+            </div>
+            <br />
+            <br />
+            <div class="row">
+                <div class="col-md-6">
+                    <input type='text' class='form-control' placeholder="Search By Name" id="sName" asp-for="employee.Name" />
+                </div>
+                <div class="col-md-2">
+                    <button type="button" class="btn btn-primary" id="btnEmpSearch">Search</button>
+                </div>
+                <div class="col-md-4" style="text-align:right">
+                    <button type="button" class="btn btn-primary" id="btnAddEmployee" data-toggle="modal" data-target="#addemployemodal">
+                        Add New Employee
+                    </button>
+                </div>
+            </div>
+            @{
+                if (!string.IsNullOrEmpty(Model.Message))
+                {
+                    <div class="alert alert-success" id="success-alert" style="margin-top: 40px;">
+                        <button type="button" class="close" data-dismiss="alert">x</button>
+                        <strong>@Model.Message ! </strong>
+                    </div>
+                }
+            }
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div id="EmployeeList" class="card-body table-responsive"></div>
+                </div>
+            </div>
+        </aside>
+    </div>
+</div>
+
+<!-- Modal Window Container -->
+<div class="my-modal-cont" id="modelContent"></div>
+
+@section Scripts
+    {
+
+    <script>
+
+        function EditEmployee(id) {
+            $('#modelContent').load('Employee/Add?handler=AddEditEmployee&id=' + id, function (result) {
+                $('#myModal').modal('show');
+            });
+        }
+
+        $(document).ready(function () {
+            $('#EmployeeList').load('?handler=EmployeeListPartial');
+
+        });
+        $(function () {
+            $('#reload').on('click', function () {
+                $('#EmployeeList').load('?handler=EmployeeListPartial');
+            });
+        });
+
+        $("#btnEmpSearch").click(function () {
+            var name = $('#sName').val();
+            $('#EmployeeList').load('?handler=SearchEmp&eName=' + name);
+        });
+
+        $(document).ready(function () {
+            $("#btnAddEmployee").click(function () {
+                $('#modelContent').load('Employee/Add?handler=AddEditEmployee&id=0', function (result) {
+                    $('#myModal').modal('show');
+                });
+            });
+        });
+
+        function CloseModalPopup() {
+            $("#myModal").modal('hide');
+        }
+
+    </script>
+}

@@ -1,0 +1,47 @@
+﻿@model List<Entity.Employee>
+<div class="inbox-body" style="margin-top:20px;">
+    <div class="mail-option">
+
+        <table class="table table-inbox table-hover" id="employeeTable" style="border:2px solid black;">
+            <thead>
+                <tr class="unread">
+                    <th class="col-sm-2 view-message  dont-show">ID</th>
+                    <th class="view-message col-sm-3">NAME</th>
+                    <th class="col-sm-2">Address</th>
+                    <th class="view-message  text-left col-sm-2">Salary</th>
+                    <th class="col-sm-1">OPERATION</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td class="view-message  dont-show"><h5>@item.Id</h5></td>
+                        <td class="view-message"><h5>@item.Name</h5></td>
+                        <td><h5 style="margin-top: 5px;">@item.Address</h5></td>
+                        <td class="view-message  text-left"><h5>@item.Salary</h5></td>
+                        <td>
+                            <form method="post">
+                                <span class="btn-group pull-right" style="margin-top: 5px">
+                                    <a class="btn btn-warning btn-xs" id="EditEmployee" onclick="EditEmployee(@item.Id);" style="background-color: green; height: 36px; margin-top: -1px;color:white">
+                                        Edit
+                                    </a>
+                                    <button type="submit" class="btn btn-danger" asp-page-handler="Delete" asp-route-id="@item.Id" style="height: 34px; margin-top: 0px;"
+                                            onclick="return confirm('Are you sure to delete this employee?');">
+                                        Delete
+                                    </button>
+                                </span>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $("#employeeTable").DataTable();
+    });
+</script>
